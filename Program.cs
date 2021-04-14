@@ -6,55 +6,36 @@ namespace Tetris
   {
     static void Main(string[] args)
     {
-
-      Console.OutputEncoding = System.Text.Encoding.Unicode;
-      // !För att skriva Emojis
-      Playfield();
+      Console.Title = "Tetris | By: Jing Xiang Xu";
+      field(21, 12);
 
 
       Console.ReadKey();
     }
 
-    public static void Player()
+    static void field(int ysize, int xsize)
     {
-      Random randomX = new Random();
-      randomX.Next(1, 11);
-    }
-    static void Playfield()
-    {
-      //   Player playerpos = new Player();
-      //   playerpos.
 
-      // !10 * 20 spelbara rutor
-      int xField = 12;
-      int yField = 22;
-
-
-      int[,] playfield = new int[xField, yField];
-
+      int[,] playfield = new int[ysize, xsize];
 
       // !Rita ruta för ruta 
-      for (int y = 0; y < playfield.GetLength(1); y++)
+      for (int y = 0; y < playfield.GetLength(0); y++)
       {
-        for (int x = 0; x < playfield.GetLength(0); x++)
+        for (int x = 0; x < playfield.GetLength(1); x++)
         {
           {
-            // !Gör alla yttre rutor till 1
-            if (x == 0 || y == 0 || x == 11 || y == 21)
+            // !Gör alla yttre rutor till nåt annat
+            if (x == 0 || x == 11 || y == 20)
             {
-              Console.Write("1");
-            }
-            else if (y == 1 && x == 1)
-            {
-              Console.Write("2");
+              Console.Write("=");
             }
             else
             {
-              Console.Write("0");
+              Console.Write(" ");
             }
           }
         }
-        // !Dela isär för varje x
+        // !Dela isär för varje rad
         Console.WriteLine();
       }
     }

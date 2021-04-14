@@ -1,0 +1,16 @@
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\bin\Debug\net5.0\Tetris.exe
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\bin\Debug\net5.0\Tetris.deps.json
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\bin\Debug\net5.0\Tetris.runtimeconfig.json
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\bin\Debug\net5.0\Tetris.runtimeconfig.dev.json
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\bin\Debug\net5.0\Tetris.dll
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\bin\Debug\net5.0\ref\Tetris.dll
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\bin\Debug\net5.0\Tetris.pdb
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\obj\Debug\net5.0\Tetris.csprojAssemblyReference.cache
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\obj\Debug\net5.0\Tetris.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\obj\Debug\net5.0\Tetris.AssemblyInfoInputs.cache
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\obj\Debug\net5.0\Tetris.AssemblyInfo.cs
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\obj\Debug\net5.0\Tetris.csproj.CoreCompileInputs.cache
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\obj\Debug\net5.0\Tetris.dll
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\obj\Debug\net5.0\ref\Tetris.dll
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\obj\Debug\net5.0\Tetris.pdb
+C:\Users\jingxiang.xu\Documents\GitHub\Tetris\obj\Debug\net5.0\Tetris.genruntimeconfig.cache

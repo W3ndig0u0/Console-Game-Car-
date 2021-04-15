@@ -7,12 +7,8 @@ namespace Tetris
 {
   class Program
   {
-
-    static int maxTime = 25;
-    static int timer = 0;
     static void Main(string[] args)
     {
-      Console.Title = "Tetris | By: Jing Xiang Xu";
       menu();
 
       Console.ReadLine();
@@ -24,19 +20,12 @@ namespace Tetris
 
       Console.WriteLine("Tetris.");
 
-      Console.Write("Ange ditt namn: ");
-      string name = Console.ReadLine();
-
-      Console.WriteLine("\nHejsan " + name + "! Välkommen Till Menyn!");
-
       while (val != 4)
       {
-        Console.WriteLine("\nVälj ett av alternativen.");
         Console.WriteLine("1. Play");
         Console.WriteLine("2. High Scores");
         Console.WriteLine("3. About");
         Console.WriteLine("4. Exit");
-        Console.Write("Jag väljer alternativ : ");
         val = int.Parse(Console.ReadLine());
         break;
       }
@@ -45,7 +34,6 @@ namespace Tetris
       {
         case 1:
           Console.Clear();
-          Console.WriteLine("Spelet startar");
           Draw(21, 12);
           break;
         case 2:
@@ -66,8 +54,8 @@ namespace Tetris
 
     static void Draw(int ysize, int xsize)
     {
-      int currentPosX = 6;
-      int currentPosY = 0;
+      int currentPosX = 5;
+      int currentPosY = 1;
 
       int[,] block = new int[currentPosY, currentPosX];
       int[,] playfield = new int[ysize, xsize];
@@ -78,8 +66,15 @@ namespace Tetris
         for (int x = 0; x < playfield.GetLength(1); x++)
         {
           {
+            Thread.Sleep(20);
+            if (x == currentPosX && y == currentPosY)
+            {
+              Console.Write("@");
+              currentPosY++;
+            }
+
             // !Gör alla yttre rutor till nåt annat
-            if (x == 0 || x == 11 || y == 20)
+            if (x == 0 || x == xsize - 1 || y == ysize - 1)
             {
               Console.Write("=");
             }
@@ -93,35 +88,6 @@ namespace Tetris
         Console.WriteLine();
       }
     }
-
-    // static void InputHandler()
-    // {
-    //   switch (ConsoleKey)
-    //   {
-    //     case ConsoleKey.LeftArrow:
-    //       // !Left arrow = move left (if it doesn't collide)
-    //       break;
-
-    //     case ConsoleKey.RightArrow:
-    //       // !Right arrow = move right (if it doesn't collide)
-    //       break;
-
-    //     case ConsoleKey.Z:
-    //       //! Rotate block (if it doesn't collide)
-
-    //       break;
-
-    //     case ConsoleKey.X:
-    //       //! Rotate block (if it doesn't collide)
-
-    //       break;
-
-    //     case ConsoleKey.Spacebar:
-    //       //!hard drop
-    //       break;
-    //   }
-    // }
-
 
   }
 }

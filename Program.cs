@@ -18,7 +18,6 @@ namespace Tetris
       Console.ReadLine();
     }
 
-
     static void menu()
     {
       int val = 0;
@@ -92,15 +91,6 @@ namespace Tetris
         }
         // !Dela isär för varje rad
         Console.WriteLine();
-      }
-      for (int i = 0; i < playfield.GetLength(0); i++)
-      {
-        if (i == currentPosY)
-        {
-          Thread.Sleep(100);
-          Console.Write("@");
-          currentPosY += 1;
-        }
       }
     }
 

@@ -10,7 +10,6 @@ namespace Tetris
     const int mapSizeY = 20;
     static char[,] bg = new char[mapSizeY, mapSizeX];
 
-
     static int score = 0;
 
     // Hold variables
@@ -20,19 +19,14 @@ namespace Tetris
     static char holdChar;
 
     const int upNextSize = 6;
-
-
     static ConsoleKeyInfo input;
-
 
     // Current info
     static int currentX = 0;
     static int currentY = 0;
-    static char currentChar = 'O';
+    static char currentChar;
 
     static int currentRot = 0;
-
-
 
     // Block and Bogs        
     static int[] bag;
@@ -44,56 +38,6 @@ namespace Tetris
     static int maxTime = 10;
     static int timer = 0;
     static int amount = 0;
-    static string characters = "OILJSZT";
-    static int[,,,] positions =
-    {
-        {
-        {{0,0},{1,0},{0,1},{1,1}},
-        {{0,0},{1,0},{0,1},{1,1}},
-        {{0,0},{1,0},{0,1},{1,1}},
-        {{0,0},{1,0},{0,1},{1,1}}
-        },
-
-        {
-        {{2,0},{2,1},{2,2},{2,3}},
-        {{0,2},{1,2},{2,2},{3,2}},
-        {{1,0},{1,1},{1,2},{1,3}},
-        {{0,1},{1,1},{2,1},{3,1}},
-        },
-        {
-        {{1,0},{1,1},{1,2},{2,2}},
-        {{1,2},{1,1},{2,1},{3,1}},
-        {{1,1},{2,1},{2,2},{2,3}},
-        {{2,1},{2,2},{1,2},{0,2}}
-        },
-
-        {
-        {{2,0},{2,1},{2,2},{1,2}},
-        {{1,1},{1,2},{2,2},{3,2}},
-        {{2,1},{1,1},{1,2},{1,3}},
-        {{0,1},{1,1},{2,1},{2,2}}
-        },
-
-        {
-        {{2,1},{1,1},{1,2},{0,2}},
-        {{1,0},{1,1},{2,1},{2,2}},
-        {{2,1},{1,1},{1,2},{0,2}},
-        {{1,0},{1,1},{2,1},{2,2}}
-        },
-        {
-        {{0,1},{1,1},{1,2},{2,2}},
-        {{1,0},{1,1},{0,1},{0,2}},
-        {{0,1},{1,1},{1,2},{2,2}},
-        {{1,0},{1,1},{0,1},{0,2}}
-        },
-
-        {
-        {{0,1},{1,1},{1,0},{2,1}},
-        {{1,0},{1,1},{2,1},{1,2}},
-        {{0,1},{1,1},{1,2},{2,1}},
-        {{1,0},{1,1},{0,1},{1,2}}
-        }
-        };
     static void Main()
     {
       // Make the console cursor invisible
@@ -194,7 +138,7 @@ namespace Tetris
         // Hold block
         case ConsoleKey.C:
 
-          // If there isnt a current held block:
+          // If there isnt a current held block: 
           if (holdIndex == -1)
           {
             holdIndex = currentIndex;
@@ -206,7 +150,6 @@ namespace Tetris
           {
             if (!Collision(holdIndex, bg, currentX, currentY, 0)) // Check for collision
             {
-
               // Switch current and hold
               int c = currentIndex;
               char ch = currentChar;
@@ -232,9 +175,9 @@ namespace Tetris
     {
 
       // Add blocks from current to background
-      for (int i = 0; i < positions.GetLength(2); i++)
+      for (int i = 0; i < Tetremino.positions.GetLength(2); i++)
       {
-        bg[positions[currentIndex, currentRot, i, 1] + currentY, positions[currentIndex, currentRot, i, 0] + currentX] = currentChar;
+        bg[Tetremino.positions[currentIndex, currentRot, i, 1] + currentY, Tetremino.positions[currentIndex, currentRot, i, 0] + currentX] = currentChar;
       }
 
       // Loop 
@@ -289,12 +232,10 @@ namespace Tetris
         for (int x = 0; x < mapSizeX; x++)
           view[y, x] = bg[y, x];
 
-
-
       // Overlay current
-      for (int i = 0; i < positions.GetLength(2); i++)
+      for (int i = 0; i < Tetremino.positions.GetLength(2); i++)
       {
-        view[positions[currentIndex, currentRot, i, 1] + currentY, positions[currentIndex, currentRot, i, 0] + currentX] = currentChar;
+        view[Tetremino.positions[currentIndex, currentRot, i, 1] + currentY, Tetremino.positions[currentIndex, currentRot, i, 0] + currentX] = currentChar;
       }
       return view;
     }
@@ -311,9 +252,9 @@ namespace Tetris
       if (holdIndex != -1)
       {
         // Overlay blocks from hold
-        for (int i = 0; i < positions.GetLength(2); i++)
+        for (int i = 0; i < Tetremino.positions.GetLength(2); i++)
         {
-          hold[positions[holdIndex, 0, i, 1] + 1, positions[holdIndex, 0, i, 0] + 1] = holdChar;
+          hold[Tetremino.positions[holdIndex, 0, i, 1] + 1, Tetremino.positions[holdIndex, 0, i, 0] + 1] = holdChar;
         }
       }
       return hold;
@@ -331,19 +272,19 @@ namespace Tetris
       for (int i = 0; i < 3; i++) // Next 3 blocks
       {
 
-        for (int l = 0; l < positions.GetLength(2); l++)
+        for (int l = 0; l < Tetremino.positions.GetLength(2); l++)
         {
           if (i + bagIndex >= 7) // If we need to acces the next bag
-            next[positions[nextBag[nextBagIndex], 0, l, 1] + 5 * i, positions[nextBag[nextBagIndex], 0, l, 0] + 1] = characters[nextBag[nextBagIndex]];
+            next[Tetremino.positions[nextBag[nextBagIndex], 0, l, 1] + 5 * i, Tetremino.positions[nextBag[nextBagIndex], 0, l, 0]] = Tetremino.characters[nextBag[nextBagIndex]];
           else
-            next[positions[bag[bagIndex + i], 0, l, 1] + 5 * i, positions[bag[bagIndex + i], 0, l, 0] + 1] = characters[bag[bagIndex + i]];
-
-
+            next[Tetremino.positions[bag[bagIndex + i], 0, l, 1] + 5 * i, Tetremino.positions[bag[bagIndex + i], 0, l, 0]] = Tetremino.characters[bag[bagIndex + i]];
         }
-        if (i + bagIndex >= 7) nextBagIndex++;
+        if (i + bagIndex >= 7)
+        {
+          nextBagIndex++;
+        }
       }
       return next;
-
     }
 
     static void Print(char[,] view, char[,] hold, char[,] next)
@@ -403,7 +344,7 @@ namespace Tetris
         }
         if (y == 1)
         {
-          Console.ForegroundColor = ConsoleColor.DarkGray;
+          // Console.ForegroundColor = ConsoleColor.DarkGray;
           Console.Write("   " + score);
         }
         Console.WriteLine();
@@ -432,15 +373,15 @@ namespace Tetris
     static bool Collision(int index, char[,] bg, int x, int y, int rot)
     {
 
-      for (int i = 0; i < positions.GetLength(2); i++)
+      for (int i = 0; i < Tetremino.positions.GetLength(2); i++)
       {
         // Check if out of bounds
-        if (positions[index, rot, i, 1] + y >= mapSizeY || positions[index, rot, i, 0] + x < 0 || positions[index, rot, i, 0] + x >= mapSizeX)
+        if (Tetremino.positions[index, rot, i, 1] + y >= mapSizeY || Tetremino.positions[index, rot, i, 0] + x < 0 || Tetremino.positions[index, rot, i, 0] + x >= mapSizeX)
         {
           return true;
         }
         // Check if not '-'
-        if (bg[positions[index, rot, i, 1] + y, positions[index, rot, i, 0] + x] != '-')
+        if (bg[Tetremino.positions[index, rot, i, 1] + y, Tetremino.positions[index, rot, i, 0] + x] != '-')
         {
           return true;
         }
@@ -481,7 +422,7 @@ namespace Tetris
       // Reset everything
       currentY = 0;
       currentX = 4;
-      currentChar = characters[bag[bagIndex]];
+      currentChar = Tetremino.characters[bag[bagIndex]];
       currentIndex = bag[bagIndex];
 
       // Check if the next block position collides. If it does its gameover
@@ -495,7 +436,7 @@ namespace Tetris
 
     static void GameOver()
     {
-      // Possible restart functionality
+      // !Menu
       Environment.Exit(1);
     }
     static void Input()

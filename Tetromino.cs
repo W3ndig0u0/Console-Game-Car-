@@ -2,7 +2,8 @@ namespace Tetris
 {
   class Tetremino
   {
-    public static string characters = "OILJSZT";
+    // !hur de ska se ut, KOM PÅ BÄTTRE SÄTT
+    public static string characters = "0000000";
     public static int[,,,] positions =
     {
         {

@@ -304,35 +304,8 @@ namespace Tetris
           // Colours
           switch (i)
           {
-            case 'O':
+            case '0':
               Console.ForegroundColor = ConsoleColor.Red;
-              Console.Write(i);
-              break;
-            case 'I':
-              Console.ForegroundColor = ConsoleColor.Blue;
-              Console.Write(i);
-              break;
-
-            case 'T':
-              Console.ForegroundColor = ConsoleColor.Cyan;
-              Console.Write(i);
-              break;
-
-            case 'S':
-              Console.ForegroundColor = ConsoleColor.DarkMagenta;
-              Console.Write(i);
-              break;
-            case 'Z':
-              Console.ForegroundColor = ConsoleColor.DarkCyan;
-              Console.Write(i);
-              break;
-            case 'L':
-              Console.ForegroundColor = ConsoleColor.Green;
-              Console.Write(i);
-              break;
-
-            case 'J':
-              Console.ForegroundColor = ConsoleColor.DarkCyan;
               Console.Write(i);
               break;
             default:
@@ -402,7 +375,10 @@ namespace Tetris
             i = false;
           }
         }
-        if (i) return y;
+        if (i)
+        {
+          return y;
+        }
       }
 
       // If no line return -1

@@ -12,18 +12,6 @@ struct Object
 
 class Program
 {
-  static void PrintOnPosition(int x, int y, char c, ConsoleColor color = ConsoleColor.Gray)
-  {
-    Console.SetCursorPosition(x, y);
-    Console.ForegroundColor = color;
-    Console.Write(c);
-  }
-  static void PrintStringOnPosition(int x, int y, string str, ConsoleColor color = ConsoleColor.Gray)
-  {
-    Console.SetCursorPosition(x, y);
-    Console.ForegroundColor = color;
-    Console.Write(str);
-  }
   static void Main()
   {
     float speed = 100f;
@@ -127,8 +115,8 @@ class Program
           }
           if (livesCount <= 0)
           {
-            PrintStringOnPosition(8, 10, "GAME OVER!!!", ConsoleColor.Red);
-            PrintStringOnPosition(8, 12, "Press [enter] to exit", ConsoleColor.Red);
+            Position.PrintStringOnPosition(8, 10, "GAME OVER!!!", ConsoleColor.Red);
+            Position.PrintStringOnPosition(8, 12, "Press [enter] to exit", ConsoleColor.Red);
             Console.ReadLine();
             gameOver = false;
           }
@@ -143,21 +131,21 @@ class Program
       if (hitted)
       {
         objects.Clear();
-        PrintOnPosition(userCar.x, userCar.y, 'X', ConsoleColor.Red);
+        Position.PrintOnPosition(userCar.x, userCar.y, 'X', ConsoleColor.Red);
       }
       else
       {
-        PrintOnPosition(userCar.x, userCar.y, userCar.c, userCar.color);
+        Position.PrintOnPosition(userCar.x, userCar.y, userCar.c, userCar.color);
       }
       foreach (Object car in objects)
       {
-        PrintOnPosition(car.x, car.y, car.c, car.color);
+        Position.PrintOnPosition(car.x, car.y, car.c, car.color);
       }
 
       // Draw info
-      PrintStringOnPosition(8, 4, "Lives: " + livesCount, ConsoleColor.White);
-      PrintStringOnPosition(8, 5, "Speed: " + speed, ConsoleColor.White);
-      PrintStringOnPosition(8, 6, "Acceleration: " + acceleration, ConsoleColor.White);
+      Position.PrintStringOnPosition(8, 4, "Lives: " + livesCount, ConsoleColor.White);
+      Position.PrintStringOnPosition(8, 5, "Speed: " + speed, ConsoleColor.White);
+      Position.PrintStringOnPosition(8, 6, "Acceleration: " + acceleration, ConsoleColor.White);
       Thread.Sleep((int)(600 - speed));
     }
   }

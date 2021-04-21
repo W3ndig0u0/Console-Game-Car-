@@ -1,417 +1,161 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
-namespace Tetris
+struct Object
 {
-  class Program
+  public int x;
+  public int y;
+  public char c;
+  public ConsoleColor color;
+}
+
+class Program
+{
+  static void PrintOnPosition(int x, int y, char c, ConsoleColor color = ConsoleColor.Gray)
   {
-    // Map / BG 
-    static int mapSizeX = 10, mapSizeY = 20;
-    static char[,] bg = new char[mapSizeY, mapSizeX];
-
-    static int score = 0;
-
-    // Hold variables
-    static int holdSizeX = 6, holdSizeY = mapSizeY, holdIndex = -1;
-    static char holdChar;
-
-    static int upNextSize = 6;
-    static ConsoleKeyInfo input;
-
-    // Current info
-    static int currentX = 0, currentY = 0;
-    static char currentChar;
-
-    static int currentRot = 0;
-
-    // Block and Bogs        
-    static int[] bag, nextBag;
-
-    static int bagIndex, currentIndex, maxTime = 10, timer, amount;
-    static void Main()
+    Console.SetCursorPosition(x, y);
+    Console.ForegroundColor = color;
+    Console.Write(c);
+  }
+  static void PrintStringOnPosition(int x, int y, string str, ConsoleColor color = ConsoleColor.Gray)
+  {
+    Console.SetCursorPosition(x, y);
+    Console.ForegroundColor = color;
+    Console.Write(str);
+  }
+  static void Main()
+  {
+    float speed = 100f;
+    float acceleration = 0.5f;
+    int playfieldWidth = 5;
+    int livesCount = 5;
+    Object userCar = new Object();
+    userCar.x = 2;
+    userCar.y = Console.WindowHeight - 1;
+    userCar.c = '@';
+    userCar.color = ConsoleColor.Yellow;
+    Random randomGenerator = new Random();
+    List<Object> objects = new List<Object>();
+    while (true)
     {
-      // Make the console cursor invisible
-      Console.CursorVisible = false;
-
-      // Title
-      Console.Title = "Tetris | By: Jing";
-
-      // !TAgen från Internet, vet ej vad den gör, vet bara att den gör så att jag kan få Live input!
-      Thread inputThread = new Thread(Input);
-      inputThread.Start();
-
-      // Generate bag / current block
-      bag = GenerateBag();
-      nextBag = GenerateBag();
-      NewBlock();
-
-      // Generate an empty bg
-      for (int y = 0; y < mapSizeY; y++)
-        for (int x = 0; x < mapSizeX; x++)
-          bg[y, x] = '-';
-
-      while (true)
+      speed += acceleration;
+      if (speed > 400)
       {
-        // Force block down
-        if (timer >= maxTime)
+        speed = 400;
+      }
+
+      bool hitted = false;
+      {
+        int chance = randomGenerator.Next(0, 100);
+        if (chance < 10)
         {
-          // If it doesn't collide, just move it down. If it does call BlockDownCollision
-          if (!Collision(currentIndex, bg, currentX, currentY + 1, currentRot))
+          Object newObject = new Object();
+          newObject.color = ConsoleColor.Cyan;
+          newObject.c = '-';
+          newObject.x = randomGenerator.Next(0, playfieldWidth);
+          newObject.y = 0;
+          objects.Add(newObject);
+        }
+        else if (chance < 20)
+        {
+          Object newObject = new Object();
+          newObject.color = ConsoleColor.Cyan;
+          newObject.c = '*';
+          newObject.x = randomGenerator.Next(0, playfieldWidth);
+          newObject.y = 0;
+          objects.Add(newObject);
+        }
+        else
+        {
+          Object newCar = new Object();
+          newCar.color = ConsoleColor.Green;
+          newCar.x = randomGenerator.Next(0, playfieldWidth);
+          newCar.y = 0;
+          newCar.c = '#';
+          objects.Add(newCar);
+        }
+      }
+
+      while (Console.KeyAvailable)
+      {
+        ConsoleKeyInfo pressedKey = Console.ReadKey(true);
+
+        if (pressedKey.Key == ConsoleKey.LeftArrow)
+        {
+          if (userCar.x - 1 >= 0)
           {
-            currentY++;
-          }
-
-          else
-          {
-            BlockDownCollision();
-          }
-          timer = 0;
-        }
-        timer += 1;
-
-        // INPUT
-        InputHandler(); // Call InputHandler
-        input = new ConsoleKeyInfo(); // Reset input var
-
-
-        // RENDER CURRENT
-        char[,] view = RenderView(); // Render view (Playing field)
-
-        // RENDER HOLD
-        char[,] hold = RenderHold(); // Render hold (the current held block)
-
-        //RENDER UP NEXT
-        char[,] next = RenderUpNext(); // Render the next three blocks as an 'up next' feature
-
-        // PRINT VIEW
-        Print(view, hold, next); // Print everything to the screen
-      }
-    }
-
-    static void InputHandler()
-    {
-      switch (input.Key)
-      {
-        // Left arrow = move left (if it doesn't collide)
-        case ConsoleKey.LeftArrow:
-          if (!Collision(currentIndex, bg, currentX - 1, currentY, currentRot)) currentX -= 1;
-          break;
-
-        // Right arrow = move right (if it doesn't collide)
-        case ConsoleKey.RightArrow:
-          if (!Collision(currentIndex, bg, currentX + 1, currentY, currentRot)) currentX += 1;
-          break;
-
-        // Rotate block (if it doesn't collide)
-        case ConsoleKey.X:
-          int newRot = currentRot + 1;
-          if (newRot >= 4) newRot = 0;
-          if (!Collision(currentIndex, bg, currentX, currentY, newRot)) currentRot = newRot;
-
-          break;
-
-        // Move the block instantly down (hard drop)
-        case ConsoleKey.Spacebar:
-          int i = 0;
-          while (true)
-          {
-            i++;
-            if (Collision(currentIndex, bg, currentX, currentY + i, currentRot))
-            {
-              currentY += i - 1;
-              break;
-            }
-
-          }
-          break;
-
-        // Hold block
-        case ConsoleKey.C:
-
-          // If there isnt a current held block: 
-          if (holdIndex == -1)
-          {
-            holdIndex = currentIndex;
-            holdChar = currentChar;
-            NewBlock();
-          }
-          // If there is:
-          else
-          {
-            if (!Collision(holdIndex, bg, currentX, currentY, 0)) // Check for collision
-            {
-              // Switch current and hold
-              int c = currentIndex;
-              char ch = currentChar;
-              currentIndex = holdIndex;
-              currentChar = holdChar;
-              holdIndex = c;
-              holdChar = ch;
-            }
-
-          }
-          break;
-
-        // Move down faster
-        case ConsoleKey.DownArrow:
-          timer = maxTime;
-          break;
-
-        default:
-          break;
-      }
-    }
-    static void BlockDownCollision()
-    {
-
-      // Add blocks from current to background
-      for (int i = 0; i < Tetremino.positions.GetLength(2); i++)
-      {
-        bg[Tetremino.positions[currentIndex, currentRot, i, 1] + currentY, Tetremino.positions[currentIndex, currentRot, i, 0] + currentX] = currentChar;
-      }
-
-      // Loop 
-      while (true)
-      {
-        // Check for line
-        int lineY = Line(bg);
-
-        // If a line is detected
-        if (lineY != -1)
-        {
-          ClearLine(lineY);
-
-          continue;
-        }
-        break;
-      }
-      // New block
-      NewBlock();
-
-    }
-
-    static void ClearLine(int lineY)
-    {
-      score += 100;
-      // Clear said line
-      for (int x = 0; x < mapSizeX; x++) bg[lineY, x] = '-';
-
-      // Loop through all blocks above line
-      for (int y = lineY - 1; y > 0; y--)
-      {
-        for (int x = 0; x < mapSizeX; x++)
-        {
-          // Move each character down
-          char character = bg[y, x];
-          if (character != '-')
-          {
-            bg[y, x] = '-';
-            bg[y + 1, x] = character;
-          }
-
-        }
-      }
-    }
-
-    static char[,] RenderView()
-    {
-      char[,] view = new char[mapSizeY, mapSizeX];
-
-      // Make view equal to bg
-      for (int y = 0; y < mapSizeY; y++)
-        for (int x = 0; x < mapSizeX; x++)
-          view[y, x] = bg[y, x];
-
-      // Overlay current
-      for (int i = 0; i < Tetremino.positions.GetLength(2); i++)
-      {
-        view[Tetremino.positions[currentIndex, currentRot, i, 1] + currentY, Tetremino.positions[currentIndex, currentRot, i, 0] + currentX] = currentChar;
-      }
-      return view;
-    }
-    static char[,] RenderHold()
-    {
-      char[,] hold = new char[holdSizeY, holdSizeX];
-      // Hold = ' ' array
-      for (int y = 0; y < holdSizeY; y++)
-        for (int x = 0; x < holdSizeX; x++)
-          hold[y, x] = ' ';
-
-
-      // If there is a held block
-      if (holdIndex != -1)
-      {
-        // Overlay blocks from hold
-        for (int i = 0; i < Tetremino.positions.GetLength(2); i++)
-        {
-          hold[Tetremino.positions[holdIndex, 0, i, 1] + 1, Tetremino.positions[holdIndex, 0, i, 0] + 1] = holdChar;
-        }
-      }
-      return hold;
-    }
-    static char[,] RenderUpNext()
-    {
-      // Up next = ' ' array   
-      char[,] next = new char[mapSizeY, upNextSize];
-      for (int y = 0; y < mapSizeY; y++)
-        for (int x = 0; x < upNextSize; x++)
-          next[y, x] = ' ';
-
-
-      int nextBagIndex = 0;
-      for (int i = 0; i < 3; i++) // Next 3 blocks
-      {
-
-        for (int l = 0; l < Tetremino.positions.GetLength(2); l++)
-        {
-          if (i + bagIndex >= 7) // If we need to acces the next bag
-            next[Tetremino.positions[nextBag[nextBagIndex], 0, l, 1] + 5 * i, Tetremino.positions[nextBag[nextBagIndex], 0, l, 0]] = Tetremino.characters[nextBag[nextBagIndex]];
-          else
-            next[Tetremino.positions[bag[bagIndex + i], 0, l, 1] + 5 * i, Tetremino.positions[bag[bagIndex + i], 0, l, 0]] = Tetremino.characters[bag[bagIndex + i]];
-        }
-        if (i + bagIndex >= 7)
-        {
-          nextBagIndex++;
-        }
-      }
-      return next;
-    }
-
-    static void Print(char[,] view, char[,] hold, char[,] next)
-    {
-      for (int y = 0; y < mapSizeY; y++)
-      {
-
-        for (int x = 0; x < holdSizeX + mapSizeX + upNextSize; x++)
-        {
-          char i = ' ';
-          // Add hold + Main View + up next to view (basically dark magic)
-          if (x < holdSizeX) i = hold[y, x];
-          else if (x >= holdSizeX + mapSizeX) i = next[y, x - mapSizeX - upNextSize];
-          else i = view[y, (x - holdSizeX)];
-
-
-          // Colours
-          switch (i)
-          {
-            case '0':
-              Console.ForegroundColor = ConsoleColor.Red;
-              Console.Write(i);
-              break;
-            default:
-              Console.ForegroundColor = ConsoleColor.White;
-              Console.Write(i);
-              break;
-          }
-
-        }
-        if (y == 1)
-        {
-          // Console.ForegroundColor = ConsoleColor.DarkGray;
-          Console.Write("   " + score);
-        }
-        Console.WriteLine();
-      }
-
-      // Reset console cursor position
-      Console.SetCursorPosition(0, Console.CursorTop - mapSizeY);
-    }
-    static int[] GenerateBag()
-    {
-      // !Internet, best-way-to-randomize-an-array-with-net
-      Random random = new Random();
-      int n = 7;
-      int[] ret = { 0, 1, 2, 3, 4, 5, 6, 7 };
-      while (n > 1)
-      {
-        int k = random.Next(n--);
-        int temp = ret[n];
-        ret[n] = ret[k];
-        ret[k] = temp;
-
-      }
-      return ret;
-
-    }
-    static bool Collision(int index, char[,] bg, int x, int y, int rot)
-    {
-
-      for (int i = 0; i < Tetremino.positions.GetLength(2); i++)
-      {
-        // Check if out of bounds
-        if (Tetremino.positions[index, rot, i, 1] + y >= mapSizeY || Tetremino.positions[index, rot, i, 0] + x < 0 || Tetremino.positions[index, rot, i, 0] + x >= mapSizeX)
-        {
-          return true;
-        }
-        // Check if not '-'
-        if (bg[Tetremino.positions[index, rot, i, 1] + y, Tetremino.positions[index, rot, i, 0] + x] != '-')
-        {
-          return true;
-        }
-      }
-
-      return false;
-    }
-
-    static int Line(char[,] bg)
-    {
-      for (int y = 0; y < mapSizeY; y++)
-      {
-        bool i = true;
-        for (int x = 0; x < mapSizeX; x++)
-        {
-          if (bg[y, x] == '-')
-          {
-            i = false;
+            userCar.x = userCar.x - 1;
           }
         }
-        if (i)
+        else if (pressedKey.Key == ConsoleKey.RightArrow)
         {
-          return y;
+          if (userCar.x + 1 < playfieldWidth)
+          {
+            userCar.x = userCar.x + 1;
+          }
         }
       }
-
-      // If no line return -1
-      return -1;
-    }
-
-    static void NewBlock()
-    {
-      // Check if new bag is necessary
-      if (bagIndex >= 7)
+      List<Object> newList = new List<Object>();
+      for (int i = 0; i < objects.Count; i++)
       {
-        bagIndex = 0;
-        bag = nextBag;
-        nextBag = GenerateBag();
+        Object oldCar = objects[i];
+        Object newObject = new Object();
+        newObject.x = oldCar.x;
+        newObject.y = oldCar.y + 1;
+        newObject.c = oldCar.c;
+        newObject.color = oldCar.color;
+        if (newObject.c == '*' && newObject.y == userCar.y && newObject.x == userCar.x)
+        {
+          speed -= 20;
+        }
+        if (newObject.c == '-' && newObject.y == userCar.y && newObject.x == userCar.x)
+        {
+          livesCount++;
+        }
+        if (newObject.c == '#' && newObject.y == userCar.y && newObject.x == userCar.x)
+        {
+          livesCount--;
+          hitted = true;
+          speed += 50;
+          if (speed > 400)
+          {
+            speed = 400;
+          }
+          if (livesCount <= 0)
+          {
+            PrintStringOnPosition(8, 10, "GAME OVER!!!", ConsoleColor.Red);
+            PrintStringOnPosition(8, 12, "Press [enter] to exit", ConsoleColor.Red);
+            Console.ReadLine();
+            Environment.Exit(0);
+          }
+        }
+        if (newObject.y < Console.WindowHeight)
+        {
+          newList.Add(newObject);
+        }
+      }
+      objects = newList;
+      Console.Clear();
+      if (hitted)
+      {
+        objects.Clear();
+        PrintOnPosition(userCar.x, userCar.y, 'X', ConsoleColor.Red);
+      }
+      else
+      {
+        PrintOnPosition(userCar.x, userCar.y, userCar.c, userCar.color);
+      }
+      foreach (Object car in objects)
+      {
+        PrintOnPosition(car.x, car.y, car.c, car.color);
       }
 
-      // Reset everything
-      currentY = 0;
-      currentX = 4;
-      currentChar = Tetremino.characters[bag[bagIndex]];
-      currentIndex = bag[bagIndex];
-
-      // Check if the next block position collides. If it does its gameover
-      if (Collision(currentIndex, bg, currentX, currentY, currentRot) && amount > 0)
-      {
-        GameOver();
-      }
-      bagIndex++;
-      amount++;
-    }
-
-    static void GameOver()
-    {
-      // !Menu
-      Environment.Exit(1);
-    }
-    static void Input()
-    {
-      while (true)
-      {
-        // Get input
-        input = Console.ReadKey(true);
-      }
+      // Draw info
+      PrintStringOnPosition(8, 4, "Lives: " + livesCount, ConsoleColor.White);
+      PrintStringOnPosition(8, 5, "Speed: " + speed, ConsoleColor.White);
+      PrintStringOnPosition(8, 6, "Acceleration: " + acceleration, ConsoleColor.White);
+      Thread.Sleep((int)(600 - speed));
     }
   }
 }

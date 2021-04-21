@@ -37,7 +37,9 @@ class Program
     userCar.color = ConsoleColor.Yellow;
     Random randomGenerator = new Random();
     List<Object> objects = new List<Object>();
-    while (true)
+    bool gameOver = false;
+
+    while (!gameOver)
     {
       speed += acceleration;
       if (speed > 400)
@@ -96,6 +98,7 @@ class Program
           }
         }
       }
+
       List<Object> newList = new List<Object>();
       for (int i = 0; i < objects.Count; i++)
       {
@@ -127,7 +130,7 @@ class Program
             PrintStringOnPosition(8, 10, "GAME OVER!!!", ConsoleColor.Red);
             PrintStringOnPosition(8, 12, "Press [enter] to exit", ConsoleColor.Red);
             Console.ReadLine();
-            Environment.Exit(0);
+            gameOver = false;
           }
         }
         if (newObject.y < Console.WindowHeight)

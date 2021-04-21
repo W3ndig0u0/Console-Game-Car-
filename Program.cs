@@ -6,38 +6,28 @@ namespace Tetris
   class Program
   {
     // Map / BG 
-    const int mapSizeX = 10;
-    const int mapSizeY = 20;
+    static int mapSizeX = 10, mapSizeY = 20;
     static char[,] bg = new char[mapSizeY, mapSizeX];
 
     static int score = 0;
 
     // Hold variables
-    const int holdSizeX = 6;
-    const int holdSizeY = mapSizeY;
-    static int holdIndex = -1;
+    static int holdSizeX = 6, holdSizeY = mapSizeY, holdIndex = -1;
     static char holdChar;
 
-    const int upNextSize = 6;
+    static int upNextSize = 6;
     static ConsoleKeyInfo input;
 
     // Current info
-    static int currentX = 0;
-    static int currentY = 0;
+    static int currentX = 0, currentY = 0;
     static char currentChar;
 
     static int currentRot = 0;
 
     // Block and Bogs        
-    static int[] bag;
-    static int[] nextBag;
+    static int[] bag, nextBag;
 
-    static int bagIndex;
-    static int currentIndex;
-
-    static int maxTime = 10;
-    static int timer = 0;
-    static int amount = 0;
+    static int bagIndex, currentIndex, maxTime = 10, timer, amount;
     static void Main()
     {
       // Make the console cursor invisible

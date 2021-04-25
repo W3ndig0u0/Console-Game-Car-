@@ -1,15 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-
-struct Object
-{
-  public int x;
-  public int y;
-  public char c;
-  public ConsoleColor color;
-}
-
 class Program
 {
   static void Main()
@@ -23,10 +14,12 @@ class Program
     userCar.y = Console.WindowHeight - 1;
     userCar.c = '@';
     userCar.color = ConsoleColor.Yellow;
+
     Random randomGenerator = new Random();
     List<Object> objects = new List<Object>();
     bool gameOver = false;
 
+    // !GameLoop
     while (!gameOver)
     {
       speed += acceleration;
@@ -36,37 +29,29 @@ class Program
       }
 
       bool hitted = false;
+      // !Medkit (+ liv)
+      int chance = randomGenerator.Next(0, 100);
+      if (chance < 20)
       {
-        int chance = randomGenerator.Next(0, 100);
-        if (chance < 10)
-        {
-          Object newObject = new Object();
-          newObject.color = ConsoleColor.Cyan;
-          newObject.c = '-';
-          newObject.x = randomGenerator.Next(0, playfieldWidth);
-          newObject.y = 0;
-          objects.Add(newObject);
-        }
-        else if (chance < 20)
-        {
-          Object newObject = new Object();
-          newObject.color = ConsoleColor.Cyan;
-          newObject.c = '*';
-          newObject.x = randomGenerator.Next(0, playfieldWidth);
-          newObject.y = 0;
-          objects.Add(newObject);
-        }
-        else
-        {
-          Object newCar = new Object();
-          newCar.color = ConsoleColor.Green;
-          newCar.x = randomGenerator.Next(0, playfieldWidth);
-          newCar.y = 0;
-          newCar.c = '#';
-          objects.Add(newCar);
-        }
+        Object newObject = new Object();
+        newObject.color = ConsoleColor.Cyan;
+        newObject.c = '+';
+        newObject.x = randomGenerator.Next(0, playfieldWidth);
+        newObject.y = 0;
+        objects.Add(newObject);
+      }
+      else
+      {
+        // !Bil (fiende)
+        Object newCar = new Object();
+        newCar.color = ConsoleColor.Green;
+        newCar.x = randomGenerator.Next(0, playfieldWidth);
+        newCar.y = 0;
+        newCar.c = '#';
+        objects.Add(newCar);
       }
 
+      // !Kontroller
       while (Console.KeyAvailable)
       {
         ConsoleKeyInfo pressedKey = Console.ReadKey(true);
@@ -87,6 +72,7 @@ class Program
         }
       }
 
+      // !New "frame" new "thingy"
       List<Object> newList = new List<Object>();
       for (int i = 0; i < objects.Count; i++)
       {
@@ -96,23 +82,17 @@ class Program
         newObject.y = oldCar.y + 1;
         newObject.c = oldCar.c;
         newObject.color = oldCar.color;
-        if (newObject.c == '*' && newObject.y == userCar.y && newObject.x == userCar.x)
-        {
-          speed -= 20;
-        }
-        if (newObject.c == '-' && newObject.y == userCar.y && newObject.x == userCar.x)
+
+        if (newObject.c == '+' && newObject.y == userCar.y && newObject.x == userCar.x)
         {
           livesCount++;
         }
+
         if (newObject.c == '#' && newObject.y == userCar.y && newObject.x == userCar.x)
         {
           livesCount--;
           hitted = true;
-          speed += 50;
-          if (speed > 400)
-          {
-            speed = 400;
-          }
+
           if (livesCount <= 0)
           {
             Position.PrintStringOnPosition(8, 10, "GAME OVER!!!", ConsoleColor.Red);
@@ -121,6 +101,7 @@ class Program
             gameOver = false;
           }
         }
+
         if (newObject.y < Console.WindowHeight)
         {
           newList.Add(newObject);
@@ -128,24 +109,26 @@ class Program
       }
       objects = newList;
       Console.Clear();
+
       if (hitted)
       {
         objects.Clear();
         Position.PrintOnPosition(userCar.x, userCar.y, 'X', ConsoleColor.Red);
       }
+
       else
       {
         Position.PrintOnPosition(userCar.x, userCar.y, userCar.c, userCar.color);
       }
-      foreach (Object car in objects)
+
+      foreach (Object stuff in objects)
       {
-        Position.PrintOnPosition(car.x, car.y, car.c, car.color);
+        Position.PrintOnPosition(stuff.x, stuff.y, stuff.c, stuff.color);
       }
 
-      // Draw info
+      // !rita text
       Position.PrintStringOnPosition(8, 4, "Lives: " + livesCount, ConsoleColor.White);
       Position.PrintStringOnPosition(8, 5, "Speed: " + speed, ConsoleColor.White);
-      Position.PrintStringOnPosition(8, 6, "Acceleration: " + acceleration, ConsoleColor.White);
       Thread.Sleep((int)(600 - speed));
     }
   }

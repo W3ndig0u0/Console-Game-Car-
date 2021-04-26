@@ -136,9 +136,17 @@ class Program
     void draw()
     {
       // !rita text
-      Position.PrintStringOnPosition(8, 4, "Lives: " + livesCount, ConsoleColor.White);
-      Position.PrintStringOnPosition(8, 5, "Speed: " + speed, ConsoleColor.White);
-      // !Hur snabbt det går per "frame"
+      Position.PrintStringOnPosition(9, 4, "Lives: " + livesCount, ConsoleColor.White);
+      Position.PrintStringOnPosition(9, 5, "Speed: " + speed, ConsoleColor.White);
+      Position.PrintStringOnPosition(9, 7, "You Are", ConsoleColor.DarkCyan);
+      Position.PrintStringOnPosition(17, 7, "@", ConsoleColor.Yellow);
+      Position.PrintStringOnPosition(9, 8, "Press <- TO go Left ", ConsoleColor.Green);
+      Position.PrintStringOnPosition(9, 9, "Press -> TO go Right ", ConsoleColor.Green);
+      Position.PrintStringOnPosition(8, 11, "#", ConsoleColor.Magenta);
+      Position.PrintStringOnPosition(10, 11, "Will Hurt You!! Avoid Them!!! ", ConsoleColor.DarkBlue);
+      Position.PrintStringOnPosition(8, 12, "+", ConsoleColor.Magenta);
+      Position.PrintStringOnPosition(10, 12, "Are Good, They will give you a Life", ConsoleColor.DarkBlue);
+      // !Hur snabbt det går per "frame" (internet)
       Thread.Sleep((int)(600 - speed));
     }
 

@@ -1,6 +1,6 @@
 using System;
 
-public struct Object
+public class Object
 {
   public int x;
   public int y;

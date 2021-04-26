@@ -8,7 +8,7 @@ class Program
     float speed = 100f;
     float acceleration = 0.5f;
     int playfieldWidth = 5;
-    int livesCount = 5;
+    int livesCount = 2;
     Object userCar = new Object();
     userCar.x = 2;
     userCar.y = Console.WindowHeight - 1;
@@ -29,9 +29,10 @@ class Program
       }
 
       bool hitted = false;
-      // !Medkit (+ liv)
+      // !Medkit (+ life)
       int chance = randomGenerator.Next(0, 100);
-      if (chance < 20)
+
+      if (chance < 25)
       {
         Object newObject = new Object();
         newObject.color = ConsoleColor.Cyan;
@@ -40,9 +41,10 @@ class Program
         newObject.y = 0;
         objects.Add(newObject);
       }
+
       else
       {
-        // !Bil (fiende)
+        // !enemy (- life)
         Object newCar = new Object();
         newCar.color = ConsoleColor.Green;
         newCar.x = randomGenerator.Next(0, playfieldWidth);
@@ -72,7 +74,7 @@ class Program
         }
       }
 
-      // !New "frame" new "thingy"
+      // !New "frame", down 1 y
       List<Object> newList = new List<Object>();
       for (int i = 0; i < objects.Count; i++)
       {
@@ -106,7 +108,9 @@ class Program
         {
           newList.Add(newObject);
         }
+
       }
+
       objects = newList;
       Console.Clear();
 
@@ -126,10 +130,17 @@ class Program
         Position.PrintOnPosition(stuff.x, stuff.y, stuff.c, stuff.color);
       }
 
+      draw();
+    }
+
+    void draw()
+    {
       // !rita text
       Position.PrintStringOnPosition(8, 4, "Lives: " + livesCount, ConsoleColor.White);
       Position.PrintStringOnPosition(8, 5, "Speed: " + speed, ConsoleColor.White);
+      // !Hur snabbt det går per "frame"
       Thread.Sleep((int)(600 - speed));
     }
+
   }
 }

@@ -19,7 +19,7 @@ public class Game
 
     userCar.x = 2;
     userCar.y = Console.WindowHeight - 1;
-    userCar.c = '@';
+    userCar.character = '@';
     userCar.color = ConsoleColor.Yellow;
 
     // !GameLoop
@@ -52,27 +52,30 @@ public class Game
         Controlls();
       }
 
-      // !ny "frame", ner ett 1 y
       List<Object> newList = new List<Object>();
       for (int i = 0; i < objects.Count; i++)
       {
+        // !ny "frame", ner ett 1 y
         Object oldCar = objects[i];
         Object newObject = new Object();
         newObject.x = oldCar.x;
         newObject.y = oldCar.y + 1;
-        newObject.c = oldCar.c;
+        newObject.character = oldCar.character;
         newObject.color = oldCar.color;
 
-        if (newObject.c == '+' && newObject.y == userCar.y && newObject.x == userCar.x)
+        // !Vad som händer när spelaren träffar medkit
+        if (newObject.character == '+' && newObject.y == userCar.y && newObject.x == userCar.x)
         {
           livesCount++;
         }
 
-        if (newObject.c == '#' && newObject.y == userCar.y && newObject.x == userCar.x)
+        // !Vad som händer när spelaren träffar fienden
+        if (newObject.character == '#' && newObject.y == userCar.y && newObject.x == userCar.x)
         {
           livesCount--;
           hitted = true;
 
+          // !När liv blir 0
           if (livesCount <= 0)
           {
             Position.PrintStringOnPosition(8, 10, "GAME OVER!!!", ConsoleColor.Red);
@@ -91,6 +94,7 @@ public class Game
       objects = newList;
       Console.Clear();
 
+      // !Spelet kollar om man är träffad eller inte
       if (hitted)
       {
         objects.Clear();
@@ -99,21 +103,22 @@ public class Game
 
       else
       {
-        Position.PrintOnPosition(userCar.x, userCar.y, userCar.c, userCar.color);
+        Position.PrintOnPosition(userCar.x, userCar.y, userCar.character, userCar.color);
       }
 
       foreach (Object stuff in objects)
       {
-        Position.PrintOnPosition(stuff.x, stuff.y, stuff.c, stuff.color);
+        Position.PrintOnPosition(stuff.x, stuff.y, stuff.character, stuff.color);
       }
       draw();
     }
 
     void newMedkit()
     {
+      // !Vad En medkit består av 
       Object newObject = new Object();
       newObject.color = ConsoleColor.Cyan;
-      newObject.c = '+';
+      newObject.character = '+';
       newObject.x = randomGenerator.Next(0, playfieldWidth);
       newObject.y = 0;
       objects.Add(newObject);
@@ -121,11 +126,12 @@ public class Game
 
     void newEnemy()
     {
+      // !Vad En fiende består av 
       Object newCar = new Object();
       newCar.color = ConsoleColor.Green;
       newCar.x = randomGenerator.Next(0, playfieldWidth);
       newCar.y = 0;
-      newCar.c = '#';
+      newCar.character = '#';
       objects.Add(newCar);
     }
 
@@ -133,6 +139,7 @@ public class Game
     {
       ConsoleKeyInfo pressedKey = Console.ReadKey(true);
 
+      // !Om spelaren trycker vänster/höger knapp rör sig spelaren
       if (pressedKey.Key == ConsoleKey.LeftArrow)
       {
         if (userCar.x - 1 >= 0)

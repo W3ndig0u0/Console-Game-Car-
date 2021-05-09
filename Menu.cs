@@ -33,6 +33,7 @@ public class Menu
       break;
     }
 
+    // !Istället för att använda fler if
     switch (menu)
     {
       case 1:
